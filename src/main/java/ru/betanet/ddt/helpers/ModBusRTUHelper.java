@@ -30,14 +30,14 @@ public class ModBusRTUHelper {
     /**
      * @return high byte from integer value
      */
-    private static byte getHighByteFromInteger(Integer value) {
+    public static byte getHighByteFromInteger(Integer value) {
         return (byte) (value >> 8);
     }
 
     /**
      * @return low byte from integer value
      */
-    private static byte getLowByteFromInteger(Integer value) {
+    public static byte getLowByteFromInteger(Integer value) {
         return (byte) (value % 256);
     }
 }

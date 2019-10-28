@@ -41,6 +41,7 @@
             <Label layoutX="7.0" layoutY="6.0" text="Direct request:" />
             <TextArea fx:id="directRequestData" layoutX="8.0" layoutY="26.0" prefHeight="311.0" prefWidth="465.0" />
             <Button layoutX="326.0" layoutY="340.0" mnemonicParsing="false" onAction="#handleSendDirectRequest" text="Send direct request" />
+            <Button layoutX="7.0" layoutY="340.0" mnemonicParsing="false" onAction="#handleInsertCRC16" text="Insert CRC16" />
          </children>
       </Pane>
     </children>

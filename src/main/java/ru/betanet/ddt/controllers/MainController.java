@@ -8,6 +8,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import ru.betanet.ddt.dto.DeviceDataDTO;
+import ru.betanet.ddt.helpers.CRCHelper;
 import ru.betanet.ddt.helpers.ModBusRTUHelper;
 import ru.betanet.ddt.services.DeviceExchangeService;
 
@@ -86,6 +87,18 @@ public class MainController implements Initializable {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    @FXML
+    private void handleInsertCRC16(ActionEvent event) {
+        byte[] request = Bytes.toArray(
+                Arrays.stream(directRequestData.getText().split(" "))
+                        .map(elem -> (byte)Integer.parseInt(elem, 16))
+                        .collect(Collectors.toList())
+        );
+        int crc = CRCHelper.calculateCRC16(request, 0, request.length);
+        byte[] crcArray = new byte[] { ModBusRTUHelper.getLowByteFromInteger(crc), ModBusRTUHelper.getHighByteFromInteger(crc) };
+        directRequestData.appendText(convertByteArrayToHEXString(crcArray));
     }
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
