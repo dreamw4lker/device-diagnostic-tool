@@ -1,6 +1,7 @@
 package ru.betanet.ddt.controllers;
 
 import com.google.common.primitives.Bytes;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -80,7 +81,7 @@ public class MainController implements Initializable {
         try {
             byte[] request = Bytes.toArray(
                     Arrays.stream(directRequestData.getText().split(" "))
-                            .map(elem -> (byte)Integer.parseInt(elem, 16))
+                            .map(elem -> (byte) Integer.parseInt(elem, 16))
                             .collect(Collectors.toList())
             );
             sendRequest(request);
@@ -93,11 +94,11 @@ public class MainController implements Initializable {
     private void handleInsertCRC16(ActionEvent event) {
         byte[] request = Bytes.toArray(
                 Arrays.stream(directRequestData.getText().split(" "))
-                        .map(elem -> (byte)Integer.parseInt(elem, 16))
+                        .map(elem -> (byte) Integer.parseInt(elem, 16))
                         .collect(Collectors.toList())
         );
         int crc = CRCHelper.calculateCRC16(request, 0, request.length);
-        byte[] crcArray = new byte[] { ModBusRTUHelper.getLowByteFromInteger(crc), ModBusRTUHelper.getHighByteFromInteger(crc) };
+        byte[] crcArray = new byte[]{ModBusRTUHelper.getLowByteFromInteger(crc), ModBusRTUHelper.getHighByteFromInteger(crc)};
         directRequestData.appendText(convertByteArrayToHEXString(crcArray));
     }
 
@@ -108,17 +109,25 @@ public class MainController implements Initializable {
      * Sends request ro remote device and fill exchange log in form's text area
      *
      * @param request array of bytes
-     * @throws Exception device exchange exception
      */
-    private void sendRequest(byte[] request) throws Exception {
-        DeviceExchangeService des = new DeviceExchangeService();
-        DeviceDataDTO ddDTO = des.runExchange(deviceIP.getText(), Integer.parseInt(devicePort.getText()), request, true);
-        if (printInHEXCheckbox.isSelected()) {
-            deviceLog.appendText(String.format(">> %s\n", convertByteArrayToHEXString(ddDTO.requestData)));
-            deviceLog.appendText(String.format("<< %s\n", convertByteArrayToHEXString(ddDTO.responseData)));
-        } else {
-            deviceLog.appendText(String.format(">> %s\n", convertByteArrayToString(ddDTO.requestData)));
-            deviceLog.appendText(String.format("<< %s\n", convertByteArrayToString(ddDTO.responseData)));
-        }
+    private void sendRequest(byte[] request) {
+        new Thread(() -> {
+            try {
+                DeviceExchangeService des = new DeviceExchangeService();
+                DeviceDataDTO ddDTO = des.runExchange(deviceIP.getText(), Integer.parseInt(devicePort.getText()), request, true);
+                Platform.runLater(() -> {
+                    if (printInHEXCheckbox.isSelected()) {
+                        deviceLog.appendText(String.format(">> %s\n", convertByteArrayToHEXString(ddDTO.requestData)));
+                        deviceLog.appendText(String.format("<< %s\n", convertByteArrayToHEXString(ddDTO.responseData)));
+                    } else {
+                        deviceLog.appendText(String.format(">> %s\n", convertByteArrayToString(ddDTO.requestData)));
+                        deviceLog.appendText(String.format("<< %s\n", convertByteArrayToString(ddDTO.responseData)));
+                    }
+                });
+            } catch (Exception e) {
+                deviceLog.appendText(String.format("<< %s:%s - %s\n", deviceIP.getText(), Integer.parseInt(devicePort.getText()), e.getMessage()));
+            }
+        }).start();
+
     }
 }
