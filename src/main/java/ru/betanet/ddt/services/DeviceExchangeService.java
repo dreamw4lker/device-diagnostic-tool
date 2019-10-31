@@ -96,4 +96,11 @@ public class DeviceExchangeService {
             return ddDTO;
         }
     }
+
+    public boolean isPortAvailable(String address, int port) throws Exception {
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress(address, port), DEFAULT_OPEN_TIMEOUT);
+            return true;
+        }
+    }
 }

@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import ru.betanet.ddt.dto.DeviceDataDTO;
@@ -54,12 +55,29 @@ public class MainController implements Initializable {
     private TextArea directRequestData;
 
     @FXML
+    private Label connectionStatus;
+
+    @FXML
     private void handleTestConnection(ActionEvent event) {
-        try {
-            //TODO: implement test method
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        new Thread(() -> {
+            try {
+                Platform.runLater(() -> {
+                    connectionStatus.setText("Please wait...");
+                });
+                DeviceExchangeService des = new DeviceExchangeService();
+                boolean isConnectionSuccessful = des.isPortAvailable(deviceIP.getText(), Integer.parseInt(devicePort.getText()));
+                Platform.runLater(() -> {
+                    if(isConnectionSuccessful) {
+                        connectionStatus.setText("Connection is OK");
+                    }
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    deviceLog.appendText(String.format("<< %s:%s - %s\n", deviceIP.getText(), Integer.parseInt(devicePort.getText()), e.getMessage()));
+                    connectionStatus.setText("Connection failed");
+                });
+            }
+        }).start();
     }
 
     @FXML

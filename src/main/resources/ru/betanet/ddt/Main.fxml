@@ -44,5 +44,6 @@
             <Button layoutX="7.0" layoutY="340.0" mnemonicParsing="false" onAction="#handleInsertCRC16" text="Insert CRC16" />
          </children>
       </Pane>
+      <Label fx:id="connectionStatus" layoutX="386.0" layoutY="36.0" />
     </children>
 </AnchorPane>
