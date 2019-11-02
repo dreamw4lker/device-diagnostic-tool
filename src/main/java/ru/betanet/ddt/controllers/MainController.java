@@ -5,10 +5,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import ru.betanet.ddt.dto.DeviceDataDTO;
 import ru.betanet.ddt.helpers.CRCHelper;
 import ru.betanet.ddt.helpers.ModBusRTUHelper;
@@ -59,6 +56,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void handleTestConnection(ActionEvent event) {
+        if (!validateIpPortFields()) return;
         new Thread(() -> {
             try {
                 Platform.runLater(() -> {
@@ -67,7 +65,7 @@ public class MainController implements Initializable {
                 DeviceExchangeService des = new DeviceExchangeService();
                 boolean isConnectionSuccessful = des.isPortAvailable(deviceIP.getText(), Integer.parseInt(devicePort.getText()));
                 Platform.runLater(() -> {
-                    if(isConnectionSuccessful) {
+                    if (isConnectionSuccessful) {
                         connectionStatus.setText("Connection is OK");
                     }
                 });
@@ -82,6 +80,8 @@ public class MainController implements Initializable {
 
     @FXML
     private void handleSendModBusRequest(ActionEvent event) {
+        if (!validateIpPortFields()) return;
+        if (!validateModBusFields()) return;
         try {
             byte deviceID = (byte) Integer.parseInt(modBusDeviceID.getText(), 16);
             byte functionCode = (byte) Integer.parseInt(modBusFC.getText(), 16);
@@ -96,6 +96,8 @@ public class MainController implements Initializable {
 
     @FXML
     private void handleSendDirectRequest(ActionEvent event) {
+        if (!validateIpPortFields()) return;
+        if (!validateDirectFields()) return;
         try {
             byte[] request = Bytes.toArray(
                     Arrays.stream(directRequestData.getText().split(" "))
@@ -110,6 +112,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void handleInsertCRC16(ActionEvent event) {
+        if (!validateDirectFields()) return;
         byte[] request = Bytes.toArray(
                 Arrays.stream(directRequestData.getText().split(" "))
                         .map(elem -> (byte) Integer.parseInt(elem, 16))
@@ -146,6 +149,30 @@ public class MainController implements Initializable {
                 deviceLog.appendText(String.format("<< %s:%s - %s\n", deviceIP.getText(), Integer.parseInt(devicePort.getText()), e.getMessage()));
             }
         }).start();
+    }
 
+    private boolean validateIpPortFields() {
+        if (deviceIP.getText().isEmpty() || devicePort.getText().isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "You should fill both IP and Port fields").show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateModBusFields() {
+        if (modBusDeviceID.getText().isEmpty() || modBusFC.getText().isEmpty() ||
+                modBusFirstRegisterAddress.getText().isEmpty() || modBusRegistersCount.getText().isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "You should fill all ModBus request fields").show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateDirectFields() {
+        if (directRequestData.getText().isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "You should fill all direct request fields").show();
+            return false;
+        }
+        return true;
     }
 }
