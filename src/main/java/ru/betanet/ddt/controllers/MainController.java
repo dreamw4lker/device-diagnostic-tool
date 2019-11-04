@@ -6,12 +6,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import ru.betanet.ddt.dto.DeviceDataDTO;
 import ru.betanet.ddt.helpers.CRCHelper;
 import ru.betanet.ddt.helpers.ModBusRTUHelper;
 import ru.betanet.ddt.services.DeviceExchangeService;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -121,6 +127,34 @@ public class MainController implements Initializable {
         int crc = CRCHelper.calculateCRC16(request, 0, request.length);
         byte[] crcArray = new byte[]{ModBusRTUHelper.getLowByteFromInteger(crc), ModBusRTUHelper.getHighByteFromInteger(crc)};
         directRequestData.appendText(convertByteArrayToHEXString(crcArray));
+    }
+
+    @FXML
+    private void handleFileExit(ActionEvent event) {
+        Platform.exit();
+    }
+
+    @FXML
+    private void handleFileDump(ActionEvent event) {
+        Stage currentStage = (Stage) this.deviceLog.getScene().getWindow();
+
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.setInitialFileName("ddt-dump-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHMMssSSS")));
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showSaveDialog(currentStage);
+        if (file != null) {
+            try (FileWriter fileWriter = new FileWriter(file)) {
+                fileWriter.write(deviceLog.getText());
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    @FXML
+    private void handleHelpAbout(ActionEvent event) {
+        //TODO: show about window
     }
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
