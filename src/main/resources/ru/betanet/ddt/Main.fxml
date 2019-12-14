@@ -180,7 +180,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Tools">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="CRC calculator" />
+                    <MenuItem mnemonicParsing="false" onAction="#handleToolsCrcCalculator" text="CRC calculator" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">

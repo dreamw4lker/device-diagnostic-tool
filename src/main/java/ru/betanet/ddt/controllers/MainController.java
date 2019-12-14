@@ -158,6 +158,11 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    private void handleToolsCrcCalculator(ActionEvent event) {
+        new Alert(Alert.AlertType.INFORMATION, "Not implemented yet").show();
+    }
+
+    @FXML
     private void handleHelpAbout(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader();
