@@ -4,9 +4,13 @@ import com.google.common.primitives.Bytes;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.betanet.ddt.dto.DeviceDataDTO;
 import ru.betanet.ddt.helpers.CRCHelper;
@@ -15,6 +19,7 @@ import ru.betanet.ddt.services.DeviceExchangeService;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -154,7 +159,21 @@ public class MainController implements Initializable {
 
     @FXML
     private void handleHelpAbout(ActionEvent event) {
-        //TODO: show about window
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/ru/betanet/ddt/About.fxml"));
+            Parent parent = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("About");
+            stage.setScene(new Scene(parent));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setMinWidth(620);
+            stage.setMinHeight(390);
+            stage.setResizable(false);
+            stage.showAndWait();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
     }
 
     public void initialize(URL url, ResourceBundle resourceBundle) {

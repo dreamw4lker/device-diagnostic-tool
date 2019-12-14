@@ -6,10 +6,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="349.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.232-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.betanet.ddt.About">
+<AnchorPane prefHeight="350.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.232-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.betanet.ddt.controllers.AboutController">
    <children>
-      <TextArea fx:id="licenseText" layoutX="15.0" layoutY="85.0" prefHeight="223.0" prefWidth="574.0" />
+      <TextArea fx:id="licenseText" editable="false" layoutX="15.0" layoutY="85.0" prefHeight="223.0" prefWidth="574.0" text="MIT License&#10;&#10;Copyright (c) 2019 Alexander Shkirkov&#10;&#10;Permission is hereby granted, free of charge, to any person obtaining a copy&#10;of this software and associated documentation files (the &quot;Software&quot;), to deal&#10;in the Software without restriction, including without limitation the rights&#10;to use, copy, modify, merge, publish, distribute, sublicense, and/or sell&#10;copies of the Software, and to permit persons to whom the Software is&#10;furnished to do so, subject to the following conditions:&#10;&#10;The above copyright notice and this permission notice shall be included in all&#10;copies or substantial portions of the Software.&#10;&#10;THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&#10;IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&#10;FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE&#10;AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER&#10;LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,&#10;OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE&#10;SOFTWARE.&#10;" />
       <Label layoutX="14.0" layoutY="14.0" text="Device diagnostic tool">
          <font>
             <Font name="System Bold" size="18.0" />
@@ -17,6 +16,6 @@
       </Label>
       <Label fx:id="versionLabel" layoutX="14.0" layoutY="40.0" text="version: 9.999" />
       <Label layoutX="14.0" layoutY="64.0" text="License:" />
-      <Button layoutX="524.0" layoutY="316.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" text="OK" />
+      <Button layoutX="524.0" layoutY="316.0" mnemonicParsing="false" onAction="#handleClose" prefHeight="25.0" prefWidth="65.0" text="Close" />
    </children>
 </AnchorPane>
