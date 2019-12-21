@@ -33,6 +33,30 @@
             <RowConstraints maxHeight="40.0" minHeight="10.0" percentHeight="65.0" prefHeight="40.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
+            <MenuBar GridPane.columnSpan="3">
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                        <MenuItem mnemonicParsing="false" onAction="#handleFileDump" text="Dump exchange log" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                    <MenuItem mnemonicParsing="false" onAction="#handleFileExit" text="Exit" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Tools">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#handleToolsCrcCalculator" text="CRC calculator" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#handleHelpAbout" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+               <GridPane.margin>
+                  <Insets left="-10.0" right="-10.0" />
+               </GridPane.margin>
+            </MenuBar>
             <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2">
                <opaqueInsets>
                   <Insets top="5.0" />
@@ -141,13 +165,13 @@
                <GridPane.margin>
                   <Insets bottom="40.0" left="5.0" right="5.0" top="25.0" />
                </GridPane.margin></TextArea>
-            <Button mnemonicParsing="false" onAction="#handleSendDirectRequest" text="Send direct request" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
-               <GridPane.margin>
-                  <Insets bottom="5.0" right="5.0" />
-               </GridPane.margin></Button>
             <Button mnemonicParsing="false" onAction="#handleInsertCRC16" text="Insert CRC16" GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" />
+               </GridPane.margin></Button>
+            <Button mnemonicParsing="false" onAction="#handleSendDirectRequest" text="Send direct request" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets bottom="5.0" right="5.0" />
                </GridPane.margin></Button>
             <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="4">
                <GridPane.margin>
@@ -169,30 +193,6 @@
                <GridPane.margin>
                   <Insets bottom="5.0" left="10.0" right="5.0" />
                </GridPane.margin></TextArea>
-            <MenuBar GridPane.columnSpan="3">
-              <menus>
-                <Menu mnemonicParsing="false" text="File">
-                  <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleFileDump" text="Dump exchange log" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                    <MenuItem mnemonicParsing="false" onAction="#handleFileExit" text="Exit" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Tools">
-                  <items>
-                    <MenuItem mnemonicParsing="false" onAction="#handleToolsCrcCalculator" text="CRC calculator" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                  <items>
-                    <MenuItem mnemonicParsing="false" onAction="#handleHelpAbout" text="About" />
-                  </items>
-                </Menu>
-              </menus>
-               <GridPane.margin>
-                  <Insets left="-10.0" right="-10.0" />
-               </GridPane.margin>
-            </MenuBar>
          </children>
       </GridPane>
     </children>
