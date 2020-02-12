@@ -3,6 +3,7 @@ package ru.betanet.ddt.services;
 import ru.betanet.ddt.dto.DeviceDataDTO;
 import ru.betanet.ddt.helpers.CRCHelper;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -84,6 +85,7 @@ public class DeviceExchangeService {
                 System.arraycopy(temporalBuffer, 0, tbuff, inputBuffer.length, local_counter);
                 inputBuffer = new byte[tbuff.length];
                 System.arraycopy(tbuff, 0, inputBuffer, 0, tbuff.length);
+                System.out.println(DatatypeConverter.printHexBinary(inputBuffer));
                 //Breaking on CRC match
                 if (isBreakByCrc(breakOnCRC, inputBuffer)) {
                     break;
