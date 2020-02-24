@@ -42,11 +42,15 @@ public class MainController implements Initializable {
     @FXML
     private TextField devicePort;
 
+    //TODO: migrate to TextFlow?
     @FXML
     private TextArea deviceLog;
 
     @FXML
     private CheckBox printInHEXCheckbox;
+
+    @FXML
+    private CheckBox showResponseStatusCheckbox;
 
     @FXML
     private TextField modBusDeviceID;
@@ -210,6 +214,9 @@ public class MainController implements Initializable {
                         deviceLog.appendText(String.format("<< %s\n", convertByteArrayToHEXString(ddDTO.responseData)));
                     } else {
                         deviceLog.appendText(String.format("<< %s\n", convertByteArrayToString(ddDTO.responseData)));
+                    }
+                    if (showResponseStatusCheckbox.isSelected()) {
+                        deviceLog.appendText(String.format("<< %s\n", ddDTO.responseType.getDescription()));
                     }
                     statusBar.setText("Request completed");
                 });

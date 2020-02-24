@@ -1,6 +1,7 @@
 package ru.betanet.ddt.services;
 
 import ru.betanet.ddt.dto.DeviceDataDTO;
+import ru.betanet.ddt.dto.ResponseType;
 import ru.betanet.ddt.helpers.CRCHelper;
 
 import javax.xml.bind.DatatypeConverter;
@@ -8,6 +9,7 @@ import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public class DeviceExchangeService {
     /**
@@ -77,24 +79,34 @@ public class DeviceExchangeService {
             byte[] temporalBuffer = new byte[65536];
 
             //Partial read to the end of a stream. May be interrupted on SocketTimeout or by CRC match
-            while ((local_counter = devIn.read(temporalBuffer, 0, temporalBuffer.length)) > 0) {
-                byte[] tbuff = new byte[inputBuffer.length + local_counter];
-                if (inputBuffer.length > 0) {
-                    System.arraycopy(inputBuffer, 0, tbuff, 0, inputBuffer.length);
+            try {
+                while ((local_counter = devIn.read(temporalBuffer, 0, temporalBuffer.length)) > 0) {
+                    byte[] tbuff = new byte[inputBuffer.length + local_counter];
+                    if (inputBuffer.length > 0) {
+                        System.arraycopy(inputBuffer, 0, tbuff, 0, inputBuffer.length);
+                    }
+                    System.arraycopy(temporalBuffer, 0, tbuff, inputBuffer.length, local_counter);
+                    inputBuffer = new byte[tbuff.length];
+                    System.arraycopy(tbuff, 0, inputBuffer, 0, tbuff.length);
+                    //Breaking on CRC match
+                    if (isBreakByCrc(breakOnCRC, inputBuffer)) {
+                        ddDTO.responseType = ResponseType.OK_CRC;
+                        break;
+                    }
+                    //Breaking on ModBus max frame size reach
+                    if (inputBuffer.length >= 256) {
+                        ddDTO.responseType = ResponseType.ERROR_MAXLEN;
+                        break;
+                    }
                 }
-                System.arraycopy(temporalBuffer, 0, tbuff, inputBuffer.length, local_counter);
-                inputBuffer = new byte[tbuff.length];
-                System.arraycopy(tbuff, 0, inputBuffer, 0, tbuff.length);
-                System.out.println(DatatypeConverter.printHexBinary(inputBuffer));
-                //Breaking on CRC match
-                if (isBreakByCrc(breakOnCRC, inputBuffer)) {
-                    break;
+                if (ddDTO.responseType == null) {
+                    ddDTO.responseType = ResponseType.OK_EOS;
                 }
-                if (inputBuffer.length >= 256) {
-                    throw new IllegalArgumentException("Input buffer is larger than the ModBus max frame size");
-                }
+                ddDTO.responseData = inputBuffer;
+            } catch(SocketTimeoutException e) {
+                ddDTO.responseType = ResponseType.SOCKET_TIMEOUT;
+                ddDTO.responseData = inputBuffer;
             }
-            ddDTO.responseData = inputBuffer;
             return ddDTO;
         }
     }

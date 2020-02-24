@@ -7,4 +7,5 @@ public class DeviceDataDTO {
     public String deviceAddress;
     public byte[] requestData;
     public byte[] responseData;
+    public ResponseType responseType;
 }
