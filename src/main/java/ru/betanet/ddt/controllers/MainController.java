@@ -8,11 +8,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
+import org.fxmisc.richtext.InlineCssTextArea;
 import ru.betanet.ddt.dto.DeviceDataDTO;
 import ru.betanet.ddt.helpers.CRCHelper;
 import ru.betanet.ddt.helpers.ModBusRTUHelper;
@@ -42,9 +46,8 @@ public class MainController implements Initializable {
     @FXML
     private TextField devicePort;
 
-    //TODO: migrate to TextFlow?
     @FXML
-    private TextArea deviceLog;
+    private InlineCssTextArea deviceLog;
 
     @FXML
     private CheckBox printInHEXCheckbox;
@@ -76,20 +79,20 @@ public class MainController implements Initializable {
         new Thread(() -> {
             try {
                 Platform.runLater(() -> {
-                    deviceLog.appendText(String.format(">> %s:%s - %s\n", deviceIP.getText(), Integer.parseInt(devicePort.getText()), "Testing connection..."));
+                    deviceLog.append(String.format(">> %s:%s - %s\n", deviceIP.getText(), Integer.parseInt(devicePort.getText()), "Testing connection..."), "-fx-fill: black;");
                     statusBar.setText("Testing connection. Please wait...");
                 });
                 DeviceExchangeService des = new DeviceExchangeService();
                 boolean isConnectionSuccessful = des.isPortAvailable(deviceIP.getText(), Integer.parseInt(devicePort.getText()));
                 Platform.runLater(() -> {
                     if (isConnectionSuccessful) {
-                        deviceLog.appendText(String.format("<< %s:%s - %s\n", deviceIP.getText(), Integer.parseInt(devicePort.getText()), "Connection is OK"));
+                        deviceLog.append(String.format("<< %s:%s - %s\n", deviceIP.getText(), Integer.parseInt(devicePort.getText()), "Connection is OK"), "-fx-fill: green;");
                         statusBar.setText("Connection is OK");
                     }
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    deviceLog.appendText(String.format("<< %s:%s - %s\n", deviceIP.getText(), Integer.parseInt(devicePort.getText()), e.getMessage()));
+                    deviceLog.append(String.format("<< %s:%s - %s\n", deviceIP.getText(), Integer.parseInt(devicePort.getText()), e.getMessage()), "-fx-fill: red;");
                     statusBar.setText("Connection failed");
                 });
             }
@@ -199,30 +202,30 @@ public class MainController implements Initializable {
     private void sendRequest(byte[] request) {
         new Thread(() -> {
             try {
-                if (printInHEXCheckbox.isSelected()) {
-                    deviceLog.appendText(String.format(">> %s\n", convertByteArrayToHEXString(request)));
-                } else {
-                    deviceLog.appendText(String.format(">> %s\n", convertByteArrayToString(request)));
-                }
                 Platform.runLater(() -> {
+                    if (printInHEXCheckbox.isSelected()) {
+                        deviceLog.append(String.format(">> %s\n", convertByteArrayToHEXString(request)), "-fx-fill: black;");
+                    } else {
+                        deviceLog.append(String.format(">> %s\n", convertByteArrayToString(request)), "-fx-fill: black;");
+                    }
                     statusBar.setText("Sending request. Please wait...");
                 });
                 DeviceExchangeService des = new DeviceExchangeService();
                 DeviceDataDTO ddDTO = des.runExchange(deviceIP.getText(), Integer.parseInt(devicePort.getText()), request, true);
                 Platform.runLater(() -> {
                     if (printInHEXCheckbox.isSelected()) {
-                        deviceLog.appendText(String.format("<< %s\n", convertByteArrayToHEXString(ddDTO.responseData)));
+                        deviceLog.append(String.format("<< %s\n", convertByteArrayToHEXString(ddDTO.responseData)), "-fx-fill: black;");
                     } else {
-                        deviceLog.appendText(String.format("<< %s\n", convertByteArrayToString(ddDTO.responseData)));
+                        deviceLog.append(String.format("<< %s\n", convertByteArrayToString(ddDTO.responseData)), "-fx-fill: black;");
                     }
                     if (showResponseStatusCheckbox.isSelected()) {
-                        deviceLog.appendText(String.format("<< %s\n", ddDTO.responseType.getDescription()));
+                        deviceLog.append(String.format("<< %s\n", ddDTO.responseType.getDescription()), "-fx-fill: black;");
                     }
                     statusBar.setText("Request completed");
                 });
             } catch (Exception e) {
-                deviceLog.appendText(String.format("<< %s:%s - %s\n", deviceIP.getText(), Integer.parseInt(devicePort.getText()), e.getMessage()));
                 Platform.runLater(() -> {
+                    deviceLog.append(String.format("<< %s:%s - %s\n", deviceIP.getText(), Integer.parseInt(devicePort.getText()), e.getMessage()), "-fx-fill: red;");
                     statusBar.setText("Device failed to response");
                 });
             }
